@@ -81,37 +81,26 @@ openGraphWindow = function( part )
 		local ButtonHeight = 30
 		local ButtonsN = 1 + 4
 		local SettingsWin = {}
+		-- creation
 		SettingsWin.PW_MaxValue = WindowMan.CreateLabel(0,0, 300, 20, "000", partWin)
 		SettingsWin.PW_MinValue = WindowMan.CreateLabel(0,0, 300, 20, "000", partWin)
-			SettingsWin.PW_MaxDValue = WindowMan.CreateLabel(0,0, 300, 20, "000", partWin)
-			SettingsWin.PW_MinDValue = WindowMan.CreateLabel(0,0, 300, 20, "000", partWin)
-		SettingsWin.PW_MinValue.SetAlignment(align_BottomEdge, 5, 20)
 		SettingsWin.PW_ZeroValue = WindowMan.CreateLabel(0, 90, 300, 20, "0", partWin)
-			
-					-- move to line 88 and change to SettingsWin
+		SettingsWin.PW_MaxDValue = WindowMan.CreateLabel(0,0, 300, 20, "000", partWin)
+		SettingsWin.PW_MinDValue = WindowMan.CreateLabel(0,0, 300, 20, "000", partWin)
+		-- alingment
+		SettingsWin.PW_MinValue.SetAlignment(align_BottomEdge, 5, 20)
 		SettingsWin.PW_ZeroValue.SetAlignment(align_LeftEdge,30,20)
-		SettingsWin.PW_MaxValue.SetAlignment(align_LeftEdge,5,30)
+		SettingsWin.PW_MaxValue.SetAlignment(align_LeftEdge,5,30) -- 5-30 no negitive to account for
 		SettingsWin.PW_MaxValue.Alignment = textAnc_MiddleRight
-		SettingsWin.PW_MinValue.SetAlignment(align_LeftEdge,0,35) -- 0-50 to account for negitive
+		SettingsWin.PW_MinValue.SetAlignment(align_LeftEdge,0,35) -- 0-35 to account for negitive
 		SettingsWin.PW_MinValue.Alignment = textAnc_MiddleRight
-		
-			SettingsWin.PW_MaxDValue.SetAlignment(align_LeftEdge,35,30)
-			SettingsWin.PW_MaxDValue.Alignment = textAnc_MiddleLeft
-			SettingsWin.PW_MinDValue.SetAlignment(align_LeftEdge,35,30) -- 0-50 to account for negitive
-			SettingsWin.PW_MinDValue.Alignment = textAnc_MiddleLeft
-			
+		-- decimals
+		SettingsWin.PW_MaxDValue.SetAlignment(align_LeftEdge,35,30)
+		SettingsWin.PW_MaxDValue.Alignment = textAnc_MiddleLeft
+		SettingsWin.PW_MinDValue.SetAlignment(align_LeftEdge,35,30) 
+		SettingsWin.PW_MinDValue.Alignment = textAnc_MiddleLeft
 		SettingsWin.PW_MinDValue.SetAlignment(align_BottomEdge, 5, 20)
-						-- stop move here
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
+	
 		-- Create a time series graph for this part.
 		local partGraph = partWin.CreateTimeSeriesGraph()
 		partGraph.SetAlignment( align_LeftEdge, 55, 290 )
@@ -283,3 +272,4 @@ function Cleanup()
 	end
 	Windows.DestroyWindow( win )
 end
+
