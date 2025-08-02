@@ -83,8 +83,35 @@ openGraphWindow = function( part )
 		local SettingsWin = {}
 		SettingsWin.PW_MaxValue = WindowMan.CreateLabel(0,0, 300, 20, "000", partWin)
 		SettingsWin.PW_MinValue = WindowMan.CreateLabel(0,0, 300, 20, "000", partWin)
+			SettingsWin.PW_MaxDValue = WindowMan.CreateLabel(0,0, 300, 20, "000", partWin)
+			SettingsWin.PW_MinDValue = WindowMan.CreateLabel(0,0, 300, 20, "000", partWin)
 		SettingsWin.PW_MinValue.SetAlignment(align_BottomEdge, 5, 20)
 		SettingsWin.PW_ZeroValue = WindowMan.CreateLabel(0, 90, 300, 20, "0", partWin)
+			
+					-- move to line 88 and change to SettingsWin
+		SettingsWin.PW_ZeroValue.SetAlignment(align_LeftEdge,30,20)
+		SettingsWin.PW_MaxValue.SetAlignment(align_LeftEdge,5,30)
+		SettingsWin.PW_MaxValue.Alignment = textAnc_MiddleRight
+		SettingsWin.PW_MinValue.SetAlignment(align_LeftEdge,0,35) -- 0-50 to account for negitive
+		SettingsWin.PW_MinValue.Alignment = textAnc_MiddleRight
+		
+			SettingsWin.PW_MaxDValue.SetAlignment(align_LeftEdge,35,30)
+			SettingsWin.PW_MaxDValue.Alignment = textAnc_MiddleLeft
+			SettingsWin.PW_MinDValue.SetAlignment(align_LeftEdge,35,30) -- 0-50 to account for negitive
+			SettingsWin.PW_MinDValue.Alignment = textAnc_MiddleLeft
+			
+		SettingsWin.PW_MinDValue.SetAlignment(align_BottomEdge, 5, 20)
+						-- stop move here
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 		-- Create a time series graph for this part.
 		local partGraph = partWin.CreateTimeSeriesGraph()
 		partGraph.SetAlignment( align_LeftEdge, 55, 290 )
@@ -202,11 +229,9 @@ function Update()
 		local part = Parts.GetInstance( k )
 		local partGraph = v
 		local SWin = graphSettingsWins[k]
-		if SWin.TimeSpanTextBox.Value then
-			if not (partGraph.TimeSpan == tonumber(SWin.TimeSpanTextBox.Value)) then
-				partGraph.TimeSpan = tonumber(SWin.TimeSpanTextBox.Value)
-			end 
-		end
+		if not (partGraph.TimeSpan == tonumber(SWin.TimeSpanTextBox.Value)) then
+			partGraph.TimeSpan = tonumber(SWin.TimeSpanTextBox.Value)
+		end 
 		if not (partGraph.ReferenceLineInterval  == tonumber(SWin.LineIntervalTextBox.Value)) then
 			partGraph.ReferenceLineInterval  =  tonumber(SWin.LineIntervalTextBox.Value)
 		end 
@@ -218,42 +243,26 @@ function Update()
 					if type( channel.Value ) == 'number' then
 						-- Add this channel's current value to the time series.
 						if SWin.channels[i].Max < channel.Value then
-							SWin.channels[i].Max = math.round(channel.Value, 6)
+							SWin.channels[i].Max = math.round(channel.Value, 2)
 						end
 						if SWin.channels[i].Min > channel.Value then
-							SWin.channels[i].Min = math.round(channel.Value, 6)
+							SWin.channels[i].Min = math.round(channel.Value, 2)
 						end
 						partGraph.AddDataPoint( i, channel.Value )
 						if SWin.labels[SWin.RefNumDropdown.Value] == channel.Label then
-							SWin.PW_MaxValue.Text = SWin.channels[i].Max
-							SWin.PW_MinValue.Text = SWin.channels[i].Min
+							SWin.PW_MaxValue.Text = math.floor(SWin.channels[i].Max, 0)
+							SWin.PW_MinValue.Text = "-"..math.abs(math.ceil(SWin.channels[i].Min, 0))
+								SWin.PW_MaxDValue.Text = "."..100*math.round(SWin.channels[i].Max - math.floor(SWin.channels[i].Max, 0), 2)
+								SWin.PW_MinDValue.Text = "."..100*math.abs(math.round(SWin.channels[i].Min - math.ceil(SWin.channels[i].Min, 0), 2))
 							if not ((SWin.channels[i].Min == 0)) and not (SWin.channels[i].Max == 0) then
 								SWin.PW_ZeroValue.Text = "0"
-								SWin.PW_ZeroValue.SetAlignment(align_TopEdge, ((SWin.channels[i].Max/(SWin.channels[i].Max-(SWin.channels[i].Min)))*180)-20, 20)
+								SWin.PW_ZeroValue.SetAlignment(align_TopEdge, ((SWin.channels[i].Max/(SWin.channels[i].Max-(SWin.channels[i].Min)))*158 -6), 20)
 							else
 								SWin.PW_ZeroValue.Text = ""
 							end
-						else
-							local max = 0
-							local min = 0
-							for channel in SWin.channels do
-								if channel.value > max then
-									max = channel.value
-								end
-								if channel.value < min then
-									min = channel.value
-								end
-							end
-							if not ((min == 0)) and not (max == 0) then
-								SWin.PW_ZeroValue.Text = "0"
-								SWin.PW_ZeroValue.SetAlignment(align_TopEdge, ((max/(max-(min)))*180)-20, 20)
-							else
-								SWin.PW_ZeroValue.Text = ""
-							end
-							SWin.PW_MaxValue.Text = max
-							SWin.PW_MinValue.Text = min
 						end
 						i = i + 1
+						
 					end
 				end
 			end
