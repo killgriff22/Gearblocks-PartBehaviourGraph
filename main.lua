@@ -245,6 +245,7 @@ function Update()
 				for channel in behaviour.Channels do
 				if type( channel.Value ) == 'number' then
 						-- Add this channel's current value to the time series.
+						print(i)
 						if SWin.channels[i].Max < channel.Value then
 							SWin.channels[i].Max = math.round(channel.Value, 2)
 						end
@@ -252,12 +253,12 @@ function Update()
 							SWin.channels[i].Min = math.round(channel.Value, 2)
 						end
 						if SWin.Automax < channel.Value then
-							if SWin.Toggles[i].Value then
+							if SWin.Toggles[i+1].Value then
 								SWin.Automax = math.round(channel.Value, 2)
 							end
 						end
 						if SWin.Automin > channel.Value then
-							if SWin.Toggles[i].Value then
+							if SWin.Toggles[i+1].Value then
 								SWin.Automin = math.round(channel.Value, 2)
 							end
 						end
