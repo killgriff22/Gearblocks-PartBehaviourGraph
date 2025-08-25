@@ -142,6 +142,7 @@ openGraphWindow = function( part )
 		SettingsWin.W = WindowMan.CreateWindow(ButtonHeight*ButtonsN, ButtonWidth, onPartWindowClose, 320, 290)
 		SettingsWin.W.Title = part.FullDisplayName
 		local buttonI = 0 
+		SettingsWin.Toggles = {}
 		for toggle in toggles do
 			local channelToggle = SettingsWin.W.CreateLabelledToggle()
 			channelToggle.SetAlignment( align_RightEdge, 0, ButtonWidth )
@@ -154,10 +155,13 @@ openGraphWindow = function( part )
 					channel.Max = 0
 					channel.Min = 0
 				end
+				SettingsWin.Automax = 0
+				SettingsWin.Automin = math.huge
 			end
 			channelToggle.OnChanged.add( onChannelToggleChanged )
 			channelToggle.Colour = toggle.colour
 			channelToggle.Text = toggle.Text
+			SettingsWin.Toggles[#SettingsWin.Toggles+1] = channelToggle
 			if toggle.I > buttonI then
 				buttonI = toggle.I
 			end
@@ -221,6 +225,10 @@ function Update()
 	-- Update each of the time series graphs.
 	for k, v in pairs( partGraphs ) do
 		local part = Parts.GetInstance( k )
+		if not part then
+			WindowMan.DestroyWindow(partWins[k])
+			WindowMan.DestroyWindow(graphSettingsWins[k])
+		end
 		local partGraph = v
 		local SWin = graphSettingsWins[k]
 		if not (partGraph.TimeSpan == tonumber(SWin.TimeSpanTextBox.Value)) then
@@ -244,10 +252,14 @@ function Update()
 							SWin.channels[i].Min = math.round(channel.Value, 2)
 						end
 						if SWin.Automax < channel.Value then
-							SWin.Automax = math.round(channel.Value, 2)
+							if SWin.Toggles[i].Value then
+								SWin.Automax = math.round(channel.Value, 2)
+							end
 						end
 						if SWin.Automin > channel.Value then
-							SWin.Automin = math.round(channel.Value, 2)
+							if SWin.Toggles[i].Value then
+								SWin.Automin = math.round(channel.Value, 2)
+							end
 						end
 						partGraph.AddDataPoint( i, channel.Value )
 						if SWin.labels[SWin.RefNumDropdown.Value] == channel.Label then
