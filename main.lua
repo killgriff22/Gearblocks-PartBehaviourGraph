@@ -163,6 +163,7 @@ openGraphWindow = function( part )
 		buttonI = buttonI + 1
 		SettingsWin.labels[buttonI] = "Auto"
 		SettingsWin.RefNumDropdown = WindowMan.CreateLabelledDropdown(0, buttonI*ButtonHeight, ButtonWidth, ButtonHeight, "Ref Value:", SettingsWin.W, SettingsWin.labels)
+		SettingsWin.RefNumDropdown.Value = buttonI
 		buttonI = buttonI + 1
 		SettingsWin.TimeSpanTextBox = WindowMan.CreateLabelledInputField(0, buttonI*ButtonHeight, ButtonWidth, ButtonHeight, "Time Span:", SettingsWin.W, 10)
 		buttonI = buttonI + 1
@@ -227,9 +228,11 @@ function Update()
 		if part and partGraph then
 			-- Iterate through all the part behaviour data channels, getting their values and updating the graphs.
 			local i = 0
+			local Automax = 0
+			local Automin = math.huge
 			for behaviour in part.Behaviours do
 				for channel in behaviour.Channels do
-					if type( channel.Value ) == 'number' then
+				if type( channel.Value ) == 'number' then
 						-- Add this channel's current value to the time series.
 						if SWin.channels[i].Max < channel.Value then
 							SWin.channels[i].Max = math.round(channel.Value, 2)
@@ -237,18 +240,36 @@ function Update()
 						if SWin.channels[i].Min > channel.Value then
 							SWin.channels[i].Min = math.round(channel.Value, 2)
 						end
+						if Automax < channel.Value then
+							Automax = math.round(channel.Value, 2)
+						end
+						if Automin > channel.Value then
+							Automin = math.round(channel.Value, 2)
+						end
 						partGraph.AddDataPoint( i, channel.Value )
 						if SWin.labels[SWin.RefNumDropdown.Value] == channel.Label then
-							SWin.PW_MaxValue.Text = math.floor(SWin.channels[i].Max, 0)
-							SWin.PW_MinValue.Text = "-"..math.abs(math.ceil(SWin.channels[i].Min, 0))
-								SWin.PW_MaxDValue.Text = "."..100*math.round(SWin.channels[i].Max - math.floor(SWin.channels[i].Max, 0), 2)
-								SWin.PW_MinDValue.Text = "."..100*math.abs(math.round(SWin.channels[i].Min - math.ceil(SWin.channels[i].Min, 0), 2))
+							SWin.PW_MaxValue.Text = math.floor(SWin.channels[i].Max)
+							SWin.PW_MinValue.Text = "-"..math.abs(math.ceil(SWin.channels[i].Min))
+								SWin.PW_MaxDValue.Text = "."..100*math.round(SWin.channels[i].Max - math.floor(SWin.channels[i].Max), 2)
+								SWin.PW_MinDValue.Text = "."..100*math.abs(math.round(SWin.channels[i].Min - math.ceil(SWin.channels[i].Min), 2))
 							if not ((SWin.channels[i].Min == 0)) and not (SWin.channels[i].Max == 0) then
 								SWin.PW_ZeroValue.Text = "0"
 								SWin.PW_ZeroValue.SetAlignment(align_TopEdge, ((SWin.channels[i].Max/(SWin.channels[i].Max-(SWin.channels[i].Min)))*158 -6), 20)
 							else
 								SWin.PW_ZeroValue.Text = ""
 							end
+						elseif SWin.labels[SWin.RefNumDropdown.Value] == "Auto" then
+							SWin.PW_MaxValue.Text = math.floor(Automax)
+							SWin.PW_MinValue.Text = "-"..math.abs(math.ceil(Automin))
+								SWin.PW_MaxDValue.Text = "."..100*math.round(Automax - math.floor(Automax), 2)
+								SWin.PW_MinDValue.Text = "."..100*math.abs(math.round(Automin - math.ceil(Automin), 2))
+							if not ((Automin == 0)) and not (Automax == 0) then
+								SWin.PW_ZeroValue.Text = "0"
+								SWin.PW_ZeroValue.SetAlignment(align_TopEdge, ((Automax/(SWin.channels[i].Max-(Automin)))*158 -6), 20)
+							else
+								SWin.PW_ZeroValue.Text = ""
+							end
+							
 						end
 						i = i + 1
 						
