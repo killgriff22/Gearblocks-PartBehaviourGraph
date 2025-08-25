@@ -245,7 +245,6 @@ function Update()
 				for channel in behaviour.Channels do
 				if type( channel.Value ) == 'number' then
 						-- Add this channel's current value to the time series.
-						print(i)
 						if SWin.channels[i].Max < channel.Value then
 							SWin.channels[i].Max = math.round(channel.Value, 2)
 						end
