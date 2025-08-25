@@ -131,7 +131,9 @@ openGraphWindow = function( part )
 					ButtonsN = ButtonsN + 1
 					SettingsWin.channels[i] = {}
 					SettingsWin.channels[i].Max = 0
-					SettingsWin.channels[i].Min = 0
+					SettingsWin.channels[i].Min = math.huge
+					SettingsWin.Automax = 0
+					SettingsWin.Automin = math.huge
 					i = i + 1
 				end
 			end
@@ -174,6 +176,8 @@ openGraphWindow = function( part )
 				channel.Min = 0
 				channel.Max = 0
 			end
+			SettingsWin.Automax = 0
+			SettingsWin.Automin = math.huge
 		end
 		buttonI = buttonI + 1
 		SettingsWin.ResetMinMaxes = WindowMan.CreateButton(0, buttonI*ButtonHeight, ButtonWidth, ButtonHeight, "Reset Mins + Maxes", SettingsWin.W, resetMinMax)
@@ -228,8 +232,7 @@ function Update()
 		if part and partGraph then
 			-- Iterate through all the part behaviour data channels, getting their values and updating the graphs.
 			local i = 0
-			local Automax = 0
-			local Automin = math.huge
+
 			for behaviour in part.Behaviours do
 				for channel in behaviour.Channels do
 				if type( channel.Value ) == 'number' then
@@ -240,11 +243,11 @@ function Update()
 						if SWin.channels[i].Min > channel.Value then
 							SWin.channels[i].Min = math.round(channel.Value, 2)
 						end
-						if Automax < channel.Value then
-							Automax = math.round(channel.Value, 2)
+						if SWin.Automax < channel.Value then
+							SWin.Automax = math.round(channel.Value, 2)
 						end
-						if Automin > channel.Value then
-							Automin = math.round(channel.Value, 2)
+						if SWin.Automin > channel.Value then
+							SWin.Automin = math.round(channel.Value, 2)
 						end
 						partGraph.AddDataPoint( i, channel.Value )
 						if SWin.labels[SWin.RefNumDropdown.Value] == channel.Label then
@@ -259,13 +262,13 @@ function Update()
 								SWin.PW_ZeroValue.Text = ""
 							end
 						elseif SWin.labels[SWin.RefNumDropdown.Value] == "Auto" then
-							SWin.PW_MaxValue.Text = math.floor(Automax)
-							SWin.PW_MinValue.Text = "-"..math.abs(math.ceil(Automin))
-								SWin.PW_MaxDValue.Text = "."..100*math.round(Automax - math.floor(Automax), 2)
-								SWin.PW_MinDValue.Text = "."..100*math.abs(math.round(Automin - math.ceil(Automin), 2))
-							if not ((Automin == 0)) and not (Automax == 0) then
+							SWin.PW_MaxValue.Text = math.floor(SWin.Automax)
+							SWin.PW_MinValue.Text = "-"..math.abs(math.ceil(SWin.Automin))
+								SWin.PW_MaxDValue.Text = "."..100*math.round(SWin.Automax - math.floor(SWin.Automax), 2)
+								SWin.PW_MinDValue.Text = "."..100*math.abs(math.round(SWin.Automin - math.ceil(SWin.Automin), 2))
+							if not ((SWin.Automin == 0)) and not (SWin.Automax == 0) then
 								SWin.PW_ZeroValue.Text = "0"
-								SWin.PW_ZeroValue.SetAlignment(align_TopEdge, ((Automax/(SWin.channels[i].Max-(Automin)))*158 -6), 20)
+								SWin.PW_ZeroValue.SetAlignment(align_TopEdge, ((SWin.Automax/(SWin.Automax-(SWin.Automin)))*158 -6), 20)
 							else
 								SWin.PW_ZeroValue.Text = ""
 							end
