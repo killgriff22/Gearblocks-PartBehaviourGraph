@@ -1,10 +1,11 @@
 {
   "name": "PartBehaviourGraph",
-  "desc": "Displays realtime graphs of part behaviour data channels (such as torque, power, etc.)\n\nUseful for visualising power and torque curves of your engines for example.\n\nTarget the part you're interested in, then click the <b>Open Graph Window</b> button (or press <i>Tab</i>).",
+  "desc": "An Improved Part ",
   "tags": [
     "addons",
     "debugging",
-    "thisisx-x"
+    "thisisx-x",
+    "alluscythe"
   ],
   "publishedID": 3539150212
 }

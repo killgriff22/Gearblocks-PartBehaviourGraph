@@ -227,7 +227,7 @@ function Update()
 		local part = Parts.GetInstance( k )
 		if not part then
 			WindowMan.DestroyWindow(partWins[k])
-			WindowMan.DestroyWindow(graphSettingsWins[k])
+			WindowMan.DestroyWindow(graphSettingsWins[k].W)
 		end
 		local partGraph = v
 		local SWin = graphSettingsWins[k]
